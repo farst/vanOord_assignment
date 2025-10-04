@@ -7,6 +7,7 @@ This document outlines the comprehensive design for implementing self-service Po
 ## 📋 **Business Requirements**
 
 ### **Target Departments:**
+
 - **Data Platform Team**: Core data infrastructure and governance
 - **Analytics Engineers**: Data modeling and transformation
 - **Data Governance**: Compliance and data quality oversight
@@ -14,6 +15,7 @@ This document outlines the comprehensive design for implementing self-service Po
 - **E&E (Engineering & Estimating)**: Project and cost analytics
 
 ### **Key Objectives:**
+
 - Enable self-service analytics across all departments
 - Maintain strict data governance and security
 - Ensure scalable and maintainable architecture
@@ -34,7 +36,7 @@ graph TB
         WS4[SMD Workspace]
         WS5[E&E Workspace]
     end
-    
+
     subgraph "Power BI Service"
         PBI1[Data Platform Reports]
         PBI2[Analytics Reports]
@@ -42,25 +44,25 @@ graph TB
         PBI4[SMD Reports]
         PBI5[E&E Reports]
     end
-    
+
     subgraph "Data Sources"
         ADLS[Azure Data Lake Storage]
         SQL[SQL Databases]
         API[External APIs]
     end
-    
+
     UC --> WS1
     UC --> WS2
     UC --> WS3
     UC --> WS4
     UC --> WS5
-    
+
     WS1 --> PBI1
     WS2 --> PBI2
     WS3 --> PBI3
     WS4 --> PBI4
     WS5 --> PBI5
-    
+
     ADLS --> UC
     SQL --> UC
     API --> UC
@@ -69,18 +71,20 @@ graph TB
 ## 🗂️ **Workspace Organization**
 
 ### **1. Data Platform Team Workspace**
+
 - **Purpose**: Core data infrastructure and governance
 - **Access**: Full administrative access
 - **Resources**:
   - SQL Warehouses: `platform-warehouse` (Large, always-on)
   - Catalogs: `platform_catalog` (all data)
   - Schemas: `raw`, `curated`, `analytics`
-- **Power BI Integration**: 
+- **Power BI Integration**:
   - Premium capacity
   - Direct query to curated schemas
   - Scheduled refresh for aggregated tables
 
 ### **2. Analytics Engineers Workspace**
+
 - **Purpose**: Data modeling and transformation
 - **Access**: Read/write to curated schemas
 - **Resources**:
@@ -93,6 +97,7 @@ graph TB
   - Incremental refresh capabilities
 
 ### **3. Data Governance Workspace**
+
 - **Purpose**: Compliance and quality oversight
 - **Access**: Read-only access to all data
 - **Resources**:
@@ -105,6 +110,7 @@ graph TB
   - Quality monitoring reports
 
 ### **4. SMD (Ship Management Department) Workspace**
+
 - **Purpose**: Operational ship management analytics
 - **Access**: Read access to operational data
 - **Resources**:
@@ -117,6 +123,7 @@ graph TB
   - Real-time fleet monitoring
 
 ### **5. E&E (Engineering & Estimating) Workspace**
+
 - **Purpose**: Project and cost analytics
 - **Access**: Read access to project and financial data
 - **Resources**:
@@ -162,6 +169,7 @@ GRANT SELECT ON SCHEMA platform_catalog.curated TO `ee_team`;
 ### **Power BI Security Integration**
 
 #### **Row-Level Security (RLS)**
+
 ```sql
 -- SMD Row-Level Security
 CREATE POLICY smd_fleet_access ON smd_catalog.operations.fleet_data
@@ -177,6 +185,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
 ```
 
 #### **Power BI Dataset Security**
+
 - **Data Platform**: Full access to all datasets
 - **Analytics Engineers**: Access to modeling datasets
 - **Governance**: Read-only access to monitoring datasets
@@ -188,6 +197,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
 ### **Connection Patterns**
 
 #### **1. Direct Query (Recommended)**
+
 ```python
 # Power BI Direct Query Configuration
 connection_string = f"""
@@ -201,16 +211,18 @@ Schema={schema_name};
 ```
 
 **Benefits:**
+
 - Real-time data access
 - Always up-to-date information
 - No data duplication
 - Automatic query optimization
 
 #### **2. Import Mode (For Aggregated Data)**
+
 ```sql
 -- Create aggregated tables for Power BI import
 CREATE TABLE analytics_catalog.models.sales_summary AS
-SELECT 
+SELECT
     region,
     product_category,
     SUM(sales_amount) as total_sales,
@@ -221,6 +233,7 @@ GROUP BY region, product_category, DATE_TRUNC('month', order_date);
 ```
 
 **Benefits:**
+
 - Faster report performance
 - Reduced warehouse load
 - Offline capability
@@ -229,6 +242,7 @@ GROUP BY region, product_category, DATE_TRUNC('month', order_date);
 ### **Refresh Strategies**
 
 #### **Incremental Refresh**
+
 ```sql
 -- Configure incremental refresh for large tables
 ALTER TABLE analytics_catalog.models.sales_summary
@@ -242,6 +256,7 @@ PARTITION BY DATE_TRUNC('month', order_date)
 ```
 
 #### **Scheduled Refresh**
+
 - **Data Platform**: Continuous refresh (every 15 minutes)
 - **Analytics Engineers**: Hourly refresh for models
 - **Governance**: Daily refresh for monitoring data
@@ -261,6 +276,7 @@ PARTITION BY DATE_TRUNC('month', order_date)
 | E&E | Medium | 15 min | 2 | Project analytics |
 
 ### **Auto-Scaling Configuration**
+
 ```python
 # Auto-scaling configuration for each warehouse
 warehouse_config = {
@@ -273,6 +289,7 @@ warehouse_config = {
 ```
 
 ### **Data Partitioning Strategy**
+
 ```sql
 -- Partition large tables for better performance
 CREATE TABLE platform_catalog.curated.sales_data
@@ -288,6 +305,7 @@ ZORDER BY (customer_id, product_id);
 ## 🔧 **Maintainability Framework**
 
 ### **Infrastructure as Code**
+
 ```hcl
 # Terraform configuration for workspace management
 resource "databricks_sql_endpoint" "smd_warehouse" {
@@ -295,7 +313,7 @@ resource "databricks_sql_endpoint" "smd_warehouse" {
   cluster_size     = "Large"
   auto_stop_mins   = 10
   max_num_clusters = 3
-  
+
   tags = {
     Department = "SMD"
     Environment = "Production"
@@ -316,6 +334,7 @@ resource "databricks_schema" "smd_operations" {
 ```
 
 ### **Monitoring and Alerting**
+
 ```python
 # Monitoring configuration
 monitoring_config = {
@@ -335,16 +354,17 @@ monitoring_config = {
 ```
 
 ### **Automated Testing**
+
 ```python
 # Data quality tests
 def test_data_quality():
     # Test data completeness
     assert df.filter(col("customer_id").isNull()).count() == 0
-    
+
     # Test data freshness
     latest_date = df.select(max("order_date")).collect()[0][0]
     assert (datetime.now() - latest_date).days <= 1
-    
+
     # Test data consistency
     assert df.select(countDistinct("region")).collect()[0][0] >= 5
 ```
@@ -379,24 +399,28 @@ def test_data_quality():
 ## 📈 **Implementation Roadmap**
 
 ### **Phase 1: Foundation (Weeks 1-4)**
+
 - [ ] Set up Unity Catalog infrastructure
 - [ ] Create workspace structure
 - [ ] Implement basic security model
 - [ ] Deploy Data Platform workspace
 
 ### **Phase 2: Core Workspaces (Weeks 5-8)**
+
 - [ ] Deploy Analytics Engineers workspace
 - [ ] Deploy Governance workspace
 - [ ] Implement data quality framework
 - [ ] Set up monitoring and alerting
 
 ### **Phase 3: Department Workspaces (Weeks 9-12)**
+
 - [ ] Deploy SMD workspace
 - [ ] Deploy E&E workspace
 - [ ] Implement row-level security
 - [ ] Configure Power BI connections
 
 ### **Phase 4: Optimization (Weeks 13-16)**
+
 - [ ] Performance tuning
 - [ ] User training
 - [ ] Documentation completion
@@ -405,6 +429,7 @@ def test_data_quality():
 ## 💰 **Cost Optimization**
 
 ### **Warehouse Cost Management**
+
 ```python
 # Cost optimization strategy
 cost_optimization = {
@@ -424,6 +449,7 @@ cost_optimization = {
 ```
 
 ### **Storage Cost Optimization**
+
 - **Data Lifecycle Management**: Automatic archiving of old data
 - **Compression**: Delta Lake automatic compression
 - **Partitioning**: Efficient data organization
@@ -432,6 +458,7 @@ cost_optimization = {
 ## 📚 **Training and Documentation**
 
 ### **User Training Program**
+
 1. **Data Platform Team**: Advanced Unity Catalog administration
 2. **Analytics Engineers**: Data modeling and Power BI integration
 3. **Governance Team**: Monitoring and compliance reporting
@@ -439,6 +466,7 @@ cost_optimization = {
 5. **E&E Team**: Project analytics and cost reporting
 
 ### **Documentation Structure**
+
 - **Administrator Guide**: Unity Catalog setup and management
 - **User Guide**: Power BI connection and report creation
 - **Security Guide**: Access control and data governance
@@ -448,12 +476,14 @@ cost_optimization = {
 ## 🎯 **Success Metrics**
 
 ### **Technical Metrics**
+
 - **Query Performance**: < 30 seconds for 95% of queries
 - **Data Freshness**: < 1 hour lag for operational data
 - **System Availability**: 99.9% uptime
 - **User Adoption**: 80% of target users active within 3 months
 
 ### **Business Metrics**
+
 - **Report Creation Time**: 50% reduction in time to create reports
 - **Data Access**: 100% of required data accessible through self-service
 - **Compliance**: 100% audit trail for data access
@@ -462,11 +492,13 @@ cost_optimization = {
 ## 🔄 **Continuous Improvement**
 
 ### **Regular Reviews**
+
 - **Monthly**: Performance and cost reviews
 - **Quarterly**: Security and compliance audits
 - **Annually**: Architecture and strategy reviews
 
 ### **Feedback Mechanisms**
+
 - **User Surveys**: Quarterly user satisfaction surveys
 - **Support Tickets**: Analysis of common issues
 - **Usage Analytics**: Power BI and Databricks usage patterns
@@ -479,6 +511,7 @@ cost_optimization = {
 This comprehensive design provides a scalable, secure, and maintainable framework for implementing self-service Power BI across multiple departments using Unity Catalog governance. The solution addresses all key requirements while providing a clear path for implementation and ongoing optimization.
 
 The architecture ensures:
+
 - ✅ **Security**: Comprehensive access control and audit trails
 - ✅ **Scalability**: Auto-scaling and performance optimization
 - ✅ **Maintainability**: Infrastructure as code and monitoring

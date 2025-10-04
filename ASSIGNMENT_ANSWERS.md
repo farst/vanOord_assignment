@@ -9,6 +9,7 @@ This document provides detailed answers to all questions in the Van Oord Databri
 **Implementation**: Complete Terraform module located in `databricks_setup/` directory
 
 **Key Components**:
+
 - **Resource Group**: Centralized resource management
 - **Databricks Workspace**: Premium tier with Unity Catalog support
 - **Storage Account**: ADLS Gen2 with hierarchical namespace
@@ -17,6 +18,7 @@ This document provides detailed answers to all questions in the Van Oord Databri
 - **Managed Identity**: Secure storage access
 
 **Terraform Configuration**:
+
 ```hcl
 # Core Databricks Workspace
 resource "azurerm_databricks_workspace" "this" {
@@ -37,6 +39,7 @@ resource "databricks_sql_endpoint" "sql_wh" {
 ```
 
 **Live Demo Capability**: Can modify SQL warehouse settings during presentation:
+
 ```bash
 # Change warehouse size in variables.tf
 cluster_size = "Large"
@@ -47,6 +50,7 @@ terraform apply
 ```
 
 **Deployment Success**: The module has been successfully deployed as a single Terraform unit, resolving all authentication and circular dependency issues:
+
 - ✅ **Authentication**: Uses Azure CLI authentication for initial setup
 - ✅ **Service Principal**: Successfully created and added to admins group
 - ✅ **SQL Warehouse**: Created with proper dependencies
@@ -57,6 +61,7 @@ terraform apply
 **Implementation**: Complete Git repository with quality assurance
 
 **Pre-commit Configuration**:
+
 ```yaml
 repos:
   - repo: https://github.com/psf/black
@@ -64,22 +69,22 @@ repos:
     hooks:
       - id: black
         language_version: python3
-  
+
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
-  
+
   - repo: https://github.com/pycqa/isort
     rev: 5.13.0
     hooks:
       - id: isort
-  
+
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: 0.37.0
     hooks:
       - id: markdownlint
-  
+
   - repo: https://github.com/sqlfluff/sqlfluff
     rev: 2.3.0
     hooks:
@@ -87,6 +92,7 @@ repos:
 ```
 
 **Quality Checks**:
+
 - **Python Code**: Black formatting, Flake8 linting, isort imports
 - **Markdown**: Markdownlint for documentation consistency
 - **SQL**: SQLFluff for SQL code quality
@@ -99,6 +105,7 @@ repos:
 **Decision Framework**:
 
 #### **Cluster Sizing Strategy**
+
 ```python
 # Small workloads (development, testing)
 cluster_config = {
@@ -126,12 +133,14 @@ cluster_config = {
 ```
 
 #### **Autoscaling Configuration**
+
 - **Scale-up**: Immediate for responsive performance
 - **Scale-down**: 10-15 minutes to allow job completion
 - **Min workers**: 1-2 for cost optimization
 - **Max workers**: Based on workload requirements and budget
 
 #### **Runtime Version Selection**
+
 - **LTS versions**: For production stability (e.g., 13.3.x)
 - **Latest versions**: For new features (e.g., 14.x)
 - **Custom images**: For specific library requirements
@@ -140,12 +149,14 @@ cluster_config = {
 
 **What are Asset Bundles?**
 Asset bundles are a declarative approach to manage Databricks resources as code, enabling:
+
 - **Infrastructure as Code**: Complete environment management
 - **Version Control**: Track changes across environments
 - **CI/CD Integration**: Automated deployments
 - **Environment Promotion**: Dev → Staging → Production
 
 **Use Cases**:
+
 ```yaml
 # databricks.yml
 bundle:
@@ -162,7 +173,7 @@ resources:
         - task_key: "transform_data"
           notebook_task:
             notebook_path: "notebooks/data_ingestion/transform.ipynb"
-  
+
   pipelines:
     data_pipeline:
       name: "Data Pipeline"
@@ -172,6 +183,7 @@ resources:
 ```
 
 **Benefits**:
+
 - **Reproducible deployments**
 - **Environment consistency**
 - **Rollback capabilities**
@@ -182,6 +194,7 @@ resources:
 **Authentication Methods**:
 
 #### **1. Managed Identity (Recommended)**
+
 ```python
 # Using Access Connector
 storage_credential = {
@@ -193,6 +206,7 @@ storage_credential = {
 ```
 
 #### **2. Service Principal (Current Implementation)**
+
 ```python
 # Using service principal
 storage_credential = {
@@ -200,12 +214,13 @@ storage_credential = {
     "azure_service_principal": {
         "directory_id": "tenant-id",
         "application_id": "client-id",
-        "client_secret": "client-secret"
+        "client_secret": "client-secret"  # pragma: allowlist secret
     }
 }
 ```
 
 **Security Best Practices**:
+
 - **Principle of least privilege**: Grant minimal required permissions
 - **Access Connector**: Use for managed identity authentication
 - **Network security**: VNet integration and private endpoints
@@ -213,6 +228,7 @@ storage_credential = {
 - **Audit logging**: Complete access audit trail
 
 **Terraform Implementation**:
+
 ```hcl
 # Service Principal for Unity Catalog
 resource "azuread_application" "databricks_sp" {
@@ -236,6 +252,7 @@ resource "azurerm_role_assignment" "sp_storage_blob_contributor" {
 **Implementation**: Complete notebook demonstration in `notebooks/01_data_pipeline_demo.py`
 
 **Processing Pipeline**:
+
 ```python
 # Read CSV from ADLS Gen2
 df = spark.read \
@@ -259,6 +276,7 @@ cleaned_df.write \
 ```
 
 **Benefits of Parquet**:
+
 - **Columnar storage**: Better compression and query performance
 - **Schema evolution**: Handle schema changes gracefully
 - **Type safety**: Preserve data types
@@ -267,6 +285,7 @@ cleaned_df.write \
 ### 7. Delta Table Versioning and Time Travel
 
 **Time Travel Queries**:
+
 ```sql
 -- Query table as of a specific version
 SELECT * FROM my_table VERSION AS OF 5;
@@ -282,6 +301,7 @@ SELECT * FROM my_table TIMESTAMP BETWEEN '2024-01-15' AND '2024-01-16';
 ```
 
 **Use Cases**:
+
 - **Data recovery**: Restore accidentally deleted data
 - **Audit trails**: Track data changes over time
 - **Reproducible analytics**: Ensure consistent results
@@ -289,12 +309,14 @@ SELECT * FROM my_table TIMESTAMP BETWEEN '2024-01-15' AND '2024-01-16';
 - **Debugging**: Investigate data quality issues
 
 **When to Use**:
+
 - **Data governance**: Track all data changes
 - **Compliance requirements**: Audit trails for sensitive data
 - **Data quality issues**: Rollback bad data
 - **Experimentation**: Safe data exploration
 
 **Implementation Example**:
+
 ```python
 # Create Delta table with versioning
 df.write \
@@ -315,6 +337,7 @@ spark.sql("SELECT * FROM delta.`{}` VERSION AS OF 0".format(delta_path)).show()
 ### 8. Incremental Pipeline Design
 
 **Change Data Capture (CDC) Pattern**:
+
 ```python
 # Track last processed timestamp
 last_processed = spark.sql("SELECT MAX(processed_timestamp) FROM watermark_table").collect()[0][0]
@@ -339,12 +362,14 @@ processed_data.write \
 ```
 
 **Incremental Processing Strategies**:
+
 - **Timestamp-based**: Use creation/modification timestamps
 - **Change Data Capture**: Database CDC streams
 - **File-based**: Track processed file names
 - **Hash-based**: Compare data hashes for changes
 
 **Benefits**:
+
 - **Cost efficiency**: Process only new data
 - **Performance**: Faster processing times
 - **Resource optimization**: Reduced compute usage
@@ -355,6 +380,7 @@ processed_data.write \
 **Delta Table Optimization Techniques**:
 
 #### **1. Z-Ordering (Clustering)**
+
 ```python
 # Optimize table with Z-ordering
 spark.sql("""
@@ -364,6 +390,7 @@ spark.sql("""
 ```
 
 #### **2. Partitioning**
+
 ```python
 # Partition by date for time-series data
 df.write \
@@ -373,6 +400,7 @@ df.write \
 ```
 
 #### **3. Compaction**
+
 ```python
 # Compact small files
 spark.sql("""
@@ -381,6 +409,7 @@ spark.sql("""
 ```
 
 #### **4. Vacuum Old Files**
+
 ```python
 # Remove old files (retain 7 days)
 spark.sql("""
@@ -389,6 +418,7 @@ spark.sql("""
 ```
 
 **Query Optimization Best Practices**:
+
 - **Predicate pushdown**: Filter early in the query
 - **Column pruning**: Select only needed columns
 - **Broadcast joins**: For small lookup tables
@@ -398,6 +428,7 @@ spark.sql("""
 ### 10. Data Quality Integration
 
 **Great Expectations Integration**:
+
 ```python
 import great_expectations as ge
 
@@ -427,6 +458,7 @@ results = context.run_validation_operator(
 ```
 
 **Deequ Integration (AWS)**:
+
 ```python
 from pydeequ.checks import Check, CheckLevel
 from pydeequ.verification import VerificationSuite
@@ -449,6 +481,7 @@ results = verificationResult.checkResults
 ```
 
 **Quality Monitoring**:
+
 - **Automated validation**: Run checks on data ingestion
 - **Alerting**: Notify on quality failures
 - **Documentation**: Data quality documentation
@@ -457,7 +490,8 @@ results = verificationResult.checkResults
 ### 11. Unity Catalog Best Practices
 
 **Organization Structure**:
-```
+
+```text
 Catalog (Business Domain)
 ├── Schema (Data Product)
 │   ├── Table (Entity)
@@ -466,6 +500,7 @@ Catalog (Business Domain)
 ```
 
 **Naming Conventions**:
+
 ```sql
 -- Catalogs: Business domain
 CREATE CATALOG finance;
@@ -491,6 +526,7 @@ CREATE TABLE finance.curated.transactions_v2;
 | Data Steward | All | All | All | CREATE, MODIFY, SELECT, APPLY |
 
 **Governance Framework**:
+
 - **Data classification**: Public, Internal, Confidential, Restricted
 - **Retention policies**: Automated data lifecycle management
 - **Audit logging**: Complete access and modification audit trail
@@ -502,6 +538,7 @@ CREATE TABLE finance.curated.transactions_v2;
 ### Comprehensive Approach to Multi-Department Power BI Setup
 
 **Target Departments**:
+
 - **Data Platform Team**: Core data infrastructure and governance
 - **Analytics Engineers**: Data modeling and transformation
 - **Data Governance**: Compliance and data quality oversight
@@ -511,6 +548,7 @@ CREATE TABLE finance.curated.transactions_v2;
 ### 1. Data Access Control and Governance using Unity Catalog
 
 **Unity Catalog Security Model**:
+
 ```sql
 -- Data Platform Team (Full Access)
 GRANT ALL PRIVILEGES ON CATALOG platform_catalog TO `data_platform_team`;
@@ -539,6 +577,7 @@ GRANT SELECT ON SCHEMA platform_catalog.curated TO `ee_team`;
 ```
 
 **Row-Level Security (RLS)**:
+
 ```sql
 -- SMD Row-Level Security
 CREATE POLICY smd_fleet_access ON smd_catalog.operations.fleet_data
@@ -558,6 +597,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
 **Workspace Structure**:
 
 #### **Data Platform Team Workspace**
+
 - **Purpose**: Core data infrastructure and governance
 - **Access**: Full administrative access
 - **Resources**:
@@ -566,6 +606,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
   - Schemas: `raw`, `curated`, `analytics`
 
 #### **Analytics Engineers Workspace**
+
 - **Purpose**: Data modeling and transformation
 - **Access**: Read/write to curated schemas
 - **Resources**:
@@ -574,6 +615,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
   - Schemas: `models`, `staging`, `marts`
 
 #### **Data Governance Workspace**
+
 - **Purpose**: Compliance and quality oversight
 - **Access**: Read-only access to all data
 - **Resources**:
@@ -582,6 +624,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
   - Schemas: `quality`, `lineage`, `compliance`
 
 #### **SMD Workspace**
+
 - **Purpose**: Operational ship management analytics
 - **Access**: Read access to operational data
 - **Resources**:
@@ -590,6 +633,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
   - Schemas: `operations`, `fleet`, `maintenance`
 
 #### **E&E Workspace**
+
 - **Purpose**: Project and cost analytics
 - **Access**: Read access to project and financial data
 - **Resources**:
@@ -602,6 +646,7 @@ USING (project_manager = CURRENT_USER() OR department = 'E&E');
 **Connection Patterns**:
 
 #### **Direct Query (Recommended)**
+
 ```python
 # Power BI Direct Query Configuration
 connection_string = f"""
@@ -615,16 +660,18 @@ Schema={schema_name};
 ```
 
 **Benefits**:
+
 - Real-time data access
 - Always up-to-date information
 - No data duplication
 - Automatic query optimization
 
 #### **Import Mode (For Aggregated Data)**
+
 ```sql
 -- Create aggregated tables for Power BI import
 CREATE TABLE analytics_catalog.models.sales_summary AS
-SELECT 
+SELECT
     region,
     product_category,
     SUM(sales_amount) as total_sales,
@@ -635,6 +682,7 @@ GROUP BY region, product_category, DATE_TRUNC('month', order_date);
 ```
 
 **Refresh Strategies**:
+
 - **Data Platform**: Continuous refresh (every 15 minutes)
 - **Analytics Engineers**: Hourly refresh for models
 - **Governance**: Daily refresh for monitoring data
@@ -654,6 +702,7 @@ GROUP BY region, product_category, DATE_TRUNC('month', order_date);
 | **E&E** | ee, platform | projects, curated | Project data | SELECT (with RLS) |
 
 **Power BI Dataset Security**:
+
 - **Data Platform**: Full access to all datasets
 - **Analytics Engineers**: Access to modeling datasets
 - **Governance**: Read-only access to monitoring datasets
@@ -673,6 +722,7 @@ GROUP BY region, product_category, DATE_TRUNC('month', order_date);
 | E&E | Medium | 15 min | 2 | Project analytics |
 
 **Auto-Scaling Configuration**:
+
 ```python
 # Auto-scaling configuration for each warehouse
 warehouse_config = {
@@ -685,6 +735,7 @@ warehouse_config = {
 ```
 
 **Infrastructure as Code**:
+
 ```hcl
 # Terraform configuration for workspace management
 resource "databricks_sql_endpoint" "smd_warehouse" {
@@ -692,7 +743,7 @@ resource "databricks_sql_endpoint" "smd_warehouse" {
   cluster_size     = "Large"
   auto_stop_mins   = 10
   max_num_clusters = 3
-  
+
   tags = {
     Department = "SMD"
     Environment = "Production"
@@ -736,24 +787,28 @@ resource "databricks_catalog" "smd_catalog" {
 **Implementation Roadmap**:
 
 #### **Phase 1: Foundation (Weeks 1-4)**
+
 - [ ] Set up Unity Catalog infrastructure
 - [ ] Create workspace structure
 - [ ] Implement basic security model
 - [ ] Deploy Data Platform workspace
 
 #### **Phase 2: Core Workspaces (Weeks 5-8)**
+
 - [ ] Deploy Analytics Engineers workspace
 - [ ] Deploy Governance workspace
 - [ ] Implement data quality framework
 - [ ] Set up monitoring and alerting
 
 #### **Phase 3: Department Workspaces (Weeks 9-12)**
+
 - [ ] Deploy SMD workspace
 - [ ] Deploy E&E workspace
 - [ ] Implement row-level security
 - [ ] Configure Power BI connections
 
 #### **Phase 4: Optimization (Weeks 13-16)**
+
 - [ ] Performance tuning
 - [ ] User training
 - [ ] Documentation completion
@@ -762,12 +817,14 @@ resource "databricks_catalog" "smd_catalog" {
 **Success Metrics**:
 
 #### **Technical Metrics**
+
 - **Query Performance**: < 30 seconds for 95% of queries
 - **Data Freshness**: < 1 hour lag for operational data
 - **System Availability**: 99.9% uptime
 - **User Adoption**: 80% of target users active within 3 months
 
 #### **Business Metrics**
+
 - **Report Creation Time**: 50% reduction in time to create reports
 - **Data Access**: 100% of required data accessible through self-service
 - **Compliance**: 100% audit trail for data access
@@ -775,7 +832,8 @@ resource "databricks_catalog" "smd_catalog" {
 
 ## 🎯 Summary and Recommendations
 
-### **Key Takeaways**:
+### **Key Takeaways**
+
 1. **Start with Unity Catalog**: Implement governance from day one
 2. **Use Managed Identity**: Secure and simple authentication
 3. **Implement Incremental Processing**: Cost-effective and performant
@@ -783,9 +841,10 @@ resource "databricks_catalog" "smd_catalog" {
 5. **Optimize Continuously**: Regular performance tuning
 6. **Document Everything**: Maintain comprehensive documentation
 
-### **Implementation Status**:
+### **Implementation Status**
+
 - ✅ **Platform Infrastructure**: Complete Terraform module deployed
-  - **Workspace**: https://adb-734420944977024.4.azuredatabricks.net
+  - **Workspace**: <https://adb-734420944977024.4.azuredatabricks.net>
   - **Storage Account**: voodatabricks77284 (ADLS Gen2)
   - **Service Principal**: Configured for Unity Catalog
   - **SQL Warehouse**: demo-sql-warehouse (2X-Small)
@@ -794,7 +853,8 @@ resource "databricks_catalog" "smd_catalog" {
 - ✅ **Security Framework**: Unity Catalog with proper authentication
 - ✅ **Live Demo Ready**: Can modify compute settings during presentation
 
-### **Next Steps**:
+### **Next Steps**
+
 1. Deploy the infrastructure using Terraform
 2. Set up Unity Catalog with proper governance
 3. Implement data quality checks

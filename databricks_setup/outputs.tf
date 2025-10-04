@@ -84,15 +84,15 @@ output "connection_info" {
 # Setup completion message
 output "workspace_ready_message" {
   description = "Message indicating workspace is ready"
-  value = "🎉 Databricks workspace is ready! Access it at: ${azurerm_databricks_workspace.this.workspace_url}/?o=${azurerm_databricks_workspace.this.workspace_id}"
+  value       = "🎉 Databricks workspace is ready! Access it at: ${azurerm_databricks_workspace.this.workspace_url}/?o=${azurerm_databricks_workspace.this.workspace_id}"
 }
 
 # Access instructions
 output "access_instructions" {
   description = "Instructions for accessing the workspace"
-  value = <<-EOT
+  value       = <<-EOT
     📋 Access Instructions:
-    
+
     1. Open your browser and go to: ${azurerm_databricks_workspace.this.workspace_url}/?o=${azurerm_databricks_workspace.this.workspace_id}
     2. Sign in with your Azure credentials
     3. Create a new notebook and use these connection details:
@@ -100,11 +100,11 @@ output "access_instructions" {
        - Raw Data: abfss://raw@${azurerm_storage_account.databricks_storage.name}.dfs.core.windows.net/
        - Curated Data: abfss://curated@${azurerm_storage_account.databricks_storage.name}.dfs.core.windows.net/
        - SQL Warehouse: ${databricks_sql_endpoint.sql_wh.name}
-    
+
     4. For Unity Catalog setup (requires account admin):
        - Service Principal Client ID: ${azuread_application.databricks_sp.client_id}
        - Service Principal Secret: [See service_principal_secret output]
-    
+
     🚀 Ready to start building data pipelines!
   EOT
 }

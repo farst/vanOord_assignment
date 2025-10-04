@@ -5,6 +5,7 @@
 ### **Cluster Sizing Decision Framework**
 
 #### **Factors to Consider:**
+
 - **Data volume**: Size of datasets being processed
 - **Processing complexity**: CPU/memory intensive operations
 - **Concurrent users**: Number of simultaneous users/jobs
@@ -12,6 +13,7 @@
 - **Performance SLAs**: Response time requirements
 
 #### **Sizing Guidelines:**
+
 ```python
 # Small workloads (development, testing)
 cluster_config = {
@@ -39,12 +41,14 @@ cluster_config = {
 ```
 
 #### **Autoscaling Configuration:**
+
 - **Scale-up**: Immediate for responsive performance
 - **Scale-down**: 10-15 minutes to allow job completion
 - **Min workers**: 1-2 for cost optimization
 - **Max workers**: Based on workload requirements and budget
 
 #### **Runtime Version Selection:**
+
 - **LTS versions**: For production stability (e.g., 13.3.x)
 - **Latest versions**: For new features (e.g., 14.x)
 - **Custom images**: For specific library requirements
@@ -54,13 +58,16 @@ cluster_config = {
 ## 2. 📦 Databricks Asset Bundle Usage
 
 ### **What are Asset Bundles?**
+
 Asset bundles are a declarative approach to manage Databricks resources as code, enabling:
+
 - **Infrastructure as Code**: Complete environment management
 - **Version Control**: Track changes across environments
 - **CI/CD Integration**: Automated deployments
 - **Environment Promotion**: Dev → Staging → Production
 
 ### **Use Cases:**
+
 ```yaml
 # databricks.yml
 bundle:
@@ -77,7 +84,7 @@ resources:
         - task_key: "transform_data"
           notebook_task:
             notebook_path: "notebooks/data_ingestion/transform.ipynb"
-  
+
   pipelines:
     data_pipeline:
       name: "Data Pipeline"
@@ -87,6 +94,7 @@ resources:
 ```
 
 ### **Benefits:**
+
 - **Reproducible deployments**
 - **Environment consistency**
 - **Rollback capabilities**
@@ -99,6 +107,7 @@ resources:
 ### **Authentication Methods:**
 
 #### **1. Managed Identity (Recommended)**
+
 ```python
 # Using Access Connector
 storage_credential = {
@@ -110,6 +119,7 @@ storage_credential = {
 ```
 
 #### **2. Service Principal**
+
 ```python
 # Using service principal
 storage_credential = {
@@ -117,12 +127,13 @@ storage_credential = {
     "azure_service_principal": {
         "directory_id": "tenant-id",
         "application_id": "client-id",
-        "client_secret": "client-secret"
+        "client_secret": "client-secret"  # pragma: allowlist secret
     }
 }
 ```
 
 ### **Security Best Practices:**
+
 - **Principle of least privilege**: Grant minimal required permissions
 - **Access Connector**: Use for managed identity authentication
 - **Network security**: VNet integration and private endpoints
@@ -134,6 +145,7 @@ storage_credential = {
 ## 4. 📊 Data Processing Pipeline (CSV → Parquet)
 
 ### **Implementation Example:**
+
 ```python
 # Read CSV from ADLS Gen2
 df = spark.read \
@@ -157,6 +169,7 @@ cleaned_df.write \
 ```
 
 ### **Benefits of Parquet:**
+
 - **Columnar storage**: Better compression and query performance
 - **Schema evolution**: Handle schema changes gracefully
 - **Type safety**: Preserve data types
@@ -167,6 +180,7 @@ cleaned_df.write \
 ## 5. ⏰ Delta Table Versioning and Time Travel
 
 ### **Time Travel Queries:**
+
 ```sql
 -- Query table as of a specific version
 SELECT * FROM my_table VERSION AS OF 5;
@@ -182,6 +196,7 @@ SELECT * FROM my_table TIMESTAMP BETWEEN '2024-01-15' AND '2024-01-16';
 ```
 
 ### **Use Cases:**
+
 - **Data recovery**: Restore accidentally deleted data
 - **Audit trails**: Track data changes over time
 - **Reproducible analytics**: Ensure consistent results
@@ -189,6 +204,7 @@ SELECT * FROM my_table TIMESTAMP BETWEEN '2024-01-15' AND '2024-01-16';
 - **Debugging**: Investigate data quality issues
 
 ### **When to Use:**
+
 - **Data governance**: Track all data changes
 - **Compliance requirements**: Audit trails for sensitive data
 - **Data quality issues**: Rollback bad data
@@ -199,6 +215,7 @@ SELECT * FROM my_table TIMESTAMP BETWEEN '2024-01-15' AND '2024-01-16';
 ## 6. 🔄 Incremental Pipeline Design
 
 ### **Change Data Capture (CDC) Pattern:**
+
 ```python
 # Track last processed timestamp
 last_processed = spark.sql("SELECT MAX(processed_timestamp) FROM watermark_table").collect()[0][0]
@@ -223,12 +240,14 @@ processed_data.write \
 ```
 
 ### **Incremental Processing Strategies:**
+
 - **Timestamp-based**: Use creation/modification timestamps
 - **Change Data Capture**: Database CDC streams
 - **File-based**: Track processed file names
 - **Hash-based**: Compare data hashes for changes
 
 ### **Benefits:**
+
 - **Cost efficiency**: Process only new data
 - **Performance**: Faster processing times
 - **Resource optimization**: Reduced compute usage
@@ -241,6 +260,7 @@ processed_data.write \
 ### **Delta Table Optimization Techniques:**
 
 #### **1. Z-Ordering (Clustering)**
+
 ```python
 # Optimize table with Z-ordering
 spark.sql("""
@@ -250,6 +270,7 @@ spark.sql("""
 ```
 
 #### **2. Partitioning**
+
 ```python
 # Partition by date for time-series data
 df.write \
@@ -259,6 +280,7 @@ df.write \
 ```
 
 #### **3. Compaction**
+
 ```python
 # Compact small files
 spark.sql("""
@@ -267,6 +289,7 @@ spark.sql("""
 ```
 
 #### **4. Vacuum Old Files**
+
 ```python
 # Remove old files (retain 7 days)
 spark.sql("""
@@ -275,6 +298,7 @@ spark.sql("""
 ```
 
 ### **Query Optimization Best Practices:**
+
 - **Predicate pushdown**: Filter early in the query
 - **Column pruning**: Select only needed columns
 - **Broadcast joins**: For small lookup tables
@@ -286,6 +310,7 @@ spark.sql("""
 ## 8. ✅ Data Quality Integration
 
 ### **Great Expectations Integration:**
+
 ```python
 import great_expectations as ge
 
@@ -315,6 +340,7 @@ results = context.run_validation_operator(
 ```
 
 ### **Deequ Integration (AWS):**
+
 ```python
 from pydeequ.checks import Check, CheckLevel
 from pydeequ.verification import VerificationSuite
@@ -337,6 +363,7 @@ results = verificationResult.checkResults
 ```
 
 ### **Quality Monitoring:**
+
 - **Automated validation**: Run checks on data ingestion
 - **Alerting**: Notify on quality failures
 - **Documentation**: Data quality documentation
@@ -347,7 +374,8 @@ results = verificationResult.checkResults
 ## 9. 🏛️ Unity Catalog Best Practices
 
 ### **Organization Structure:**
-```
+
+```text
 Catalog (Business Domain)
 ├── Schema (Data Product)
 │   ├── Table (Entity)
@@ -356,6 +384,7 @@ Catalog (Business Domain)
 ```
 
 ### **Naming Conventions:**
+
 ```sql
 -- Catalogs: Business domain
 CREATE CATALOG finance;
@@ -373,6 +402,7 @@ CREATE TABLE finance.curated.transactions_v2;
 ```
 
 ### **Access Control Matrix:**
+
 | Role | Catalog | Schema | Table | Permissions |
 |------|---------|--------|-------|-------------|
 | Data Engineer | All | All | All | CREATE, MODIFY, SELECT |
@@ -381,6 +411,7 @@ CREATE TABLE finance.curated.transactions_v2;
 | Data Steward | All | All | All | CREATE, MODIFY, SELECT, APPLY |
 
 ### **Governance Framework:**
+
 - **Data classification**: Public, Internal, Confidential, Restricted
 - **Retention policies**: Automated data lifecycle management
 - **Audit logging**: Complete access and modification audit trail
@@ -388,6 +419,7 @@ CREATE TABLE finance.curated.transactions_v2;
 - **Data lineage**: Track data flow and dependencies
 
 ### **Implementation Checklist:**
+
 - [ ] Create catalog hierarchy based on business domains
 - [ ] Implement consistent naming conventions
 - [ ] Set up role-based access control
@@ -402,6 +434,7 @@ CREATE TABLE finance.curated.transactions_v2;
 ## 10. 🎯 Summary and Recommendations
 
 ### **Key Takeaways:**
+
 1. **Start with Unity Catalog**: Implement governance from day one
 2. **Use Managed Identity**: Secure and simple authentication
 3. **Implement Incremental Processing**: Cost-effective and performant
@@ -410,6 +443,7 @@ CREATE TABLE finance.curated.transactions_v2;
 6. **Document Everything**: Maintain comprehensive documentation
 
 ### **Next Steps:**
+
 1. Deploy the infrastructure using Terraform
 2. Set up Unity Catalog with proper governance
 3. Implement data quality checks

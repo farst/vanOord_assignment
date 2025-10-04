@@ -1,4 +1,4 @@
-# ✅ Service Principal Approach - SUCCESS!
+# ✅ Service Principal Approach - SUCCESS
 
 ## 🎯 **What We Accomplished**
 
@@ -46,22 +46,26 @@ TENANT_ID="af3fb8b5-f600-424b-a5be-82b33ad2c898"
 ## 📋 **Connection Information**
 
 ### **Storage URLs:**
+
 - **Raw Data**: `abfss://raw@voodatabricks10344.dfs.core.windows.net/`
 - **Curated Data**: `abfss://curated@voodatabricks10344.dfs.core.windows.net/`
 
 ### **Workspace Access:**
-- **URL**: https://adb-4246519093925856.16.azuredatabricks.net
+
+- **URL**: <https://adb-4246519093925856.16.azuredatabricks.net>
 - **Authentication**: Azure AD credentials
 
 ## 🚀 **Next Steps**
 
 ### **Immediate Actions:**
+
 1. **Access the workspace** using the URL above
 2. **Sign in** with your Azure credentials
 3. **Create a notebook** and start building data pipelines
 4. **Test storage connectivity** using the container URLs
 
 ### **For Unity Catalog (When Account Admin Access is Available):**
+
 1. Use the Service Principal credentials to set up Unity Catalog
 2. Create storage credentials in the account console
 3. Set up external locations and grants

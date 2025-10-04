@@ -132,41 +132,7 @@ variable "enable_serverless_compute" {
   default     = true
 }
 
-variable "metastore_name" {
-  description = "Name of the Unity Catalog metastore"
-  type        = string
-  default     = "main"
-}
 
-variable "external_locations" {
-  description = "List of external locations to create"
-  type = map(object({
-    name        = string
-    url         = string
-    comment     = string
-    permissions = map(list(string))
-  }))
-  default = {
-    raw_data = {
-      name    = "raw_data"
-      url     = ""
-      comment = "External location for raw data"
-      permissions = {
-        "finance_analysts" = ["READ FILES"]
-        "data_engineers"   = ["READ FILES", "WRITE FILES"]
-      }
-    }
-    curated_data = {
-      name    = "curated_data"
-      url     = ""
-      comment = "External location for curated data"
-      permissions = {
-        "finance_analysts" = ["READ FILES"]
-        "data_engineers"   = ["READ FILES", "WRITE FILES"]
-      }
-    }
-  }
-}
 
 variable "tags" {
   description = "Tags to apply to all resources"
@@ -177,17 +143,4 @@ variable "tags" {
     ManagedBy   = "Terraform"
     Owner       = "Data Platform Team"
   }
-}
-
-variable "client_secret" {
-  description = "Client secret for Service Principal authentication"
-  type        = string
-  sensitive   = true
-  default     = null
-}
-
-variable "service_principal_app_id" {
-  description = "Application ID of the Service Principal for Unity Catalog"
-  type        = string
-  default     = "326236ad-b8f2-4dd7-bc86-bc4d462398b1"
 }

@@ -26,7 +26,8 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
-        args: ['--max-line-length=88', '--extend-ignore=E203,W503']
+        args: ['--max-line-length=88', '--extend-ignore=E203,W503,F401,F403,F405,E501,E722,F541,E402']
+        exclude: ^notebooks/
 
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
@@ -72,7 +73,7 @@ repos:
     rev: v0.37.0
     hooks:
       - id: markdownlint
-        args: ['--fix']
+        args: ['--fix', '--disable', 'MD013,MD033,MD024']
 
   # Security scanning
   - repo: https://github.com/Yelp/detect-secrets

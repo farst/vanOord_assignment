@@ -2,6 +2,7 @@
 # This configuration creates a complete Databricks environment with Unity Catalog
 
 terraform {
+  required_version = ">= 1.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -31,7 +32,7 @@ provider "azurerm" {
 # Use Azure CLI authentication for initial setup
 # This allows the current user to create service principals
 provider "databricks" {
-  host = azurerm_databricks_workspace.this.workspace_url
+  host                        = azurerm_databricks_workspace.this.workspace_url
   azure_workspace_resource_id = azurerm_databricks_workspace.this.id
   # Using Azure CLI authentication for initial setup
 }
@@ -74,9 +75,9 @@ resource "azurerm_user_assigned_identity" "databricks_identity" {
 
 # Databricks Workspace
 resource "azurerm_databricks_workspace" "this" {
-  name                          = var.workspace_name != "" ? var.workspace_name : "databricks-${var.environment}-ws"
-  resource_group_name           = azurerm_resource_group.rg.name
-  location                      = azurerm_resource_group.rg.location
+  name                         = var.workspace_name != "" ? var.workspace_name : "databricks-${var.environment}-ws"
+  resource_group_name          = azurerm_resource_group.rg.name
+  location                     = azurerm_resource_group.rg.location
   sku                          = var.workspace_sku
   managed_resource_group_name  = "databricks-rg-${azurerm_resource_group.rg.name}"
   customer_managed_key_enabled = false
@@ -104,7 +105,7 @@ resource "azurerm_storage_account" "databricks_storage" {
   account_tier             = var.storage_account_tier
   account_replication_type = var.storage_replication_type
   account_kind             = "StorageV2"
-  is_hns_enabled          = true
+  is_hns_enabled           = true
 
   tags = merge(var.tags, {
     Environment = var.environment
@@ -127,9 +128,9 @@ resource "azurerm_storage_container" "curated" {
 
 # Grant storage permissions to managed identity
 resource "azurerm_role_assignment" "mi_storage_blob_contributor" {
-  scope                = azurerm_storage_account.databricks_storage.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_user_assigned_identity.databricks_identity.principal_id
+  scope                            = azurerm_storage_account.databricks_storage.id
+  role_definition_name             = "Storage Blob Data Contributor"
+  principal_id                     = azurerm_user_assigned_identity.databricks_identity.principal_id
   skip_service_principal_aad_check = true
 }
 
@@ -143,7 +144,7 @@ resource "databricks_service_principal" "databricks_sp" {
 # Data source to get the admins group ID
 data "databricks_group" "admins" {
   display_name = "admins"
-  depends_on = [azurerm_databricks_workspace.this]
+  depends_on   = [azurerm_databricks_workspace.this]
 }
 
 # Add service principal to workspace admins group
@@ -154,11 +155,11 @@ resource "databricks_group_member" "service_principal_admin" {
 
 # SQL Warehouse for data processing
 resource "databricks_sql_endpoint" "sql_wh" {
-  name             = var.sql_warehouse_name
-  cluster_size     = var.sql_warehouse_cluster_size
-  auto_stop_mins   = var.sql_warehouse_auto_stop_mins
-  max_num_clusters = var.sql_warehouse_max_clusters
-  min_num_clusters = var.sql_warehouse_min_clusters
+  name                      = var.sql_warehouse_name
+  cluster_size              = var.sql_warehouse_cluster_size
+  auto_stop_mins            = var.sql_warehouse_auto_stop_mins
+  max_num_clusters          = var.sql_warehouse_max_clusters
+  min_num_clusters          = var.sql_warehouse_min_clusters
   enable_serverless_compute = var.enable_serverless_compute
 
   depends_on = [databricks_service_principal.databricks_sp]
@@ -180,8 +181,8 @@ resource "azuread_service_principal_password" "databricks_sp" {
 
 # Grant storage permissions to service principal
 resource "azurerm_role_assignment" "sp_storage_blob_contributor" {
-  scope                = azurerm_storage_account.databricks_storage.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azuread_service_principal.databricks_sp.object_id
+  scope                            = azurerm_storage_account.databricks_storage.id
+  role_definition_name             = "Storage Blob Data Contributor"
+  principal_id                     = azuread_service_principal.databricks_sp.object_id
   skip_service_principal_aad_check = true
 }
