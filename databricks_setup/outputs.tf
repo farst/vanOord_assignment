@@ -71,6 +71,11 @@ output "sql_warehouse_name" {
   value       = databricks_sql_endpoint.sql_wh.name
 }
 
+output "sql_warehouse_cluster_size" {
+  description = "Current cluster size of the SQL warehouse"
+  value       = databricks_sql_endpoint.sql_wh.cluster_size
+}
+
 # Connection information for notebooks
 output "connection_info" {
   description = "Connection information for Databricks notebooks"

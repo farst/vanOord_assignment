@@ -126,6 +126,12 @@ resource "azurerm_storage_container" "curated" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "metastore" {
+  name                  = "metastore"
+  storage_account_id    = azurerm_storage_account.databricks_storage.id
+  container_access_type = "private"
+}
+
 # Grant storage permissions to managed identity
 resource "azurerm_role_assignment" "mi_storage_blob_contributor" {
   scope                            = azurerm_storage_account.databricks_storage.id

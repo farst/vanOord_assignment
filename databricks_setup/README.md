@@ -31,19 +31,25 @@ No modules.
 | [azuread_application.databricks_sp](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application) | resource |
 | [azuread_service_principal.databricks_sp](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal) | resource |
 | [azuread_service_principal_password.databricks_sp](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal_password) | resource |
+| [azurerm_databricks_access_connector.unity_catalog](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_access_connector) | resource |
 | [azurerm_databricks_workspace.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace) | resource |
 | [azurerm_resource_group.rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [azurerm_role_assignment.access_connector_storage](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.databricks_admin](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.mi_storage_blob_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.rg_admin](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.sp_storage_blob_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_storage_account.databricks_storage](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_storage_container.curated](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) | resource |
+| [azurerm_storage_container.metastore](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) | resource |
 | [azurerm_storage_container.raw](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) | resource |
 | [azurerm_user_assigned_identity.databricks_identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
+| [databricks_external_location.curated_data](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/external_location) | resource |
+| [databricks_external_location.raw_data](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/external_location) | resource |
 | [databricks_group_member.service_principal_admin](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/group_member) | resource |
 | [databricks_service_principal.databricks_sp](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/service_principal) | resource |
 | [databricks_sql_endpoint.sql_wh](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/sql_endpoint) | resource |
+| [databricks_storage_credential.external](https://registry.terraform.io/providers/databricks/databricks/latest/docs/resources/storage_credential) | resource |
 | [random_integer.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) | resource |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 | [databricks_group.admins](https://registry.terraform.io/providers/databricks/databricks/latest/docs/data-sources/group) | data source |
@@ -82,6 +88,7 @@ No modules.
 | <a name="output_service_principal_client_id"></a> [service\_principal\_client\_id](#output\_service\_principal\_client\_id) | Client ID of the service principal |
 | <a name="output_service_principal_object_id"></a> [service\_principal\_object\_id](#output\_service\_principal\_object\_id) | Object ID of the service principal |
 | <a name="output_service_principal_secret"></a> [service\_principal\_secret](#output\_service\_principal\_secret) | Client secret of the service principal |
+| <a name="output_sql_warehouse_cluster_size"></a> [sql\_warehouse\_cluster\_size](#output\_sql\_warehouse\_cluster\_size) | Current cluster size of the SQL warehouse |
 | <a name="output_sql_warehouse_id"></a> [sql\_warehouse\_id](#output\_sql\_warehouse\_id) | ID of the SQL warehouse |
 | <a name="output_sql_warehouse_name"></a> [sql\_warehouse\_name](#output\_sql\_warehouse\_name) | Name of the SQL warehouse |
 | <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | Name of the storage account |
