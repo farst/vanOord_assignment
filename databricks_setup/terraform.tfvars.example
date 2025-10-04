@@ -1,0 +1,65 @@
+# =============================================================================
+# TERRAFORM VARIABLES - Van Oord Databricks Assignment
+# =============================================================================
+# Copy this file to terraform.tfvars and customize the values
+
+# Environment Configuration
+environment = "demo"
+project_name = "van-oord-databricks"
+location = "westeurope"
+
+# Resource Names (leave empty for auto-generated names)
+resource_group_name = ""
+workspace_name = ""
+storage_account_name = ""
+
+# Databricks Workspace Configuration
+workspace_sku = "premium"
+
+# Storage Account Configuration
+storage_account_tier = "Standard"
+storage_replication_type = "LRS"
+
+# SQL Warehouse Configuration (for live demo)
+sql_warehouse_name = "demo-sql-warehouse"
+sql_warehouse_cluster_size = "2X-Small"  # Change this during live demo: "Small", "Medium", "Large", "X-Large", "2X-Large"
+sql_warehouse_min_clusters = 1
+sql_warehouse_max_clusters = 1
+sql_warehouse_auto_stop_mins = 20
+enable_serverless_compute = true
+
+# Unity Catalog Configuration
+metastore_name = "main"
+service_principal_app_id = "326236ad-b8f2-4dd7-bc86-bc4d462398b1"
+
+# External Locations (for Unity Catalog)
+external_locations = {
+  raw_data = {
+    name    = "raw_data"
+    url     = ""  # Will be populated automatically
+    comment = "External location for raw data"
+    permissions = {
+      "data_engineers" = ["READ FILES", "WRITE FILES"]
+      "data_analysts"  = ["READ FILES"]
+    }
+  }
+  curated_data = {
+    name    = "curated_data"
+    url     = ""  # Will be populated automatically
+    comment = "External location for curated data"
+    permissions = {
+      "data_engineers" = ["READ FILES", "WRITE FILES"]
+      "data_analysts"  = ["READ FILES"]
+    }
+  }
+}
+
+# Tags
+tags = {
+  Project     = "Van Oord Databricks Assignment"
+  Environment = "Demo"
+  ManagedBy   = "Terraform"
+  Owner       = "Data Platform Team"
+  CostCenter  = "IT"
+  Application = "Data Platform"
+}
