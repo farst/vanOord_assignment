@@ -31,7 +31,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 # Storage configuration
-storage_account = "voodatabricks10344"
+storage_account = "voodatabricks77284"
 curated_container = "curated"
 curated_path = f"abfss://{curated_container}@{storage_account}.dfs.core.windows.net/"
 

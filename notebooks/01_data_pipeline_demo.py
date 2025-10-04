@@ -27,7 +27,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 # Get storage configuration from environment
-storage_account = "voodatabricks10344"
+storage_account = "voodatabricks77284"
 raw_container = "raw"
 curated_container = "curated"
 
