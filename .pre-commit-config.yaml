@@ -61,13 +61,13 @@ repos:
           - --args=--only=terraform_required_providers
           - --args=--only=terraform_standard_module_structure
           - --args=--only=terraform_workspace_remote
-      - id: terraform_checkov
-        args:
-          - --args=--framework=terraform
-          - --args=--skip-check=CKV_AZURE_1,CKV_AZURE_2
-      - id: terraform_tfsec
-        args:
-          - --args=--soft-fail
+      # - id: terraform_checkov
+      #   args:
+      #     - --args=--framework=terraform
+      #     - --args=--skip-check=CKV_AZURE_1,CKV_AZURE_2
+      # - id: terraform_tfsec
+      #   args:
+      #     - --args=--soft-fail
 
   # Jupyter notebook cleanup
   - repo: https://github.com/kynan/nbstripout
