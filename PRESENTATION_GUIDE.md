@@ -1,137 +1,72 @@
-# 🎯 Van Oord Assignment - Simple Presentation Guide
+# Presentation Guide - Van Oord Databricks Assignment
 
-## 🚀 **What You Have Built**
+## Overview (5 minutes)
+Complete enterprise Databricks platform addressing all assignment requirements:
+- Production environment deployed via Terraform
+- Infrastructure as Code with live demo capability
+- All technical questions answered with working code
+- Multi-department Power BI architecture
 
-You've built a **complete enterprise Databricks platform** that addresses ALL assignment requirements:
+## Live Demo (15 minutes)
 
-- ✅ **Production Environment**: Real Azure Databricks workspace deployed
-- ✅ **Infrastructure as Code**: Complete Terraform automation
-- ✅ **Live Demo Ready**: Can modify production settings during presentation
-- ✅ **All Technical Questions**: Comprehensive answers with working code
-- ✅ **Power BI Architecture**: Multi-department self-service design
-
----
-
-## 🎬 **Your Presentation (45 minutes)**
-
-### **1. Opening (5 minutes)**
-*"I've built a complete enterprise Databricks platform. Let me show you what's been implemented."*
-
-**Show:**
+### Environment Details
 - **Workspace**: https://adb-734420944977024.4.azuredatabricks.net
 - **Storage**: voodatabricks77284 (ADLS Gen2)
 - **SQL Warehouse**: demo-sql-warehouse
 
-### **2. Live Demo (15 minutes)**
-*"Now I'll demonstrate Infrastructure as Code by modifying our production SQL warehouse."*
-
-**Commands:**
+### Infrastructure as Code Demo
 ```bash
-cd /Users/faust/Documents/GitHub/vanOord_assignment/databricks_setup
+cd databricks_setup
 
-# Show current size
+# Show current configuration
 terraform output sql_warehouse_cluster_size
-# Result: "2X-Small"
 
-# Plan the change
+# Plan infrastructure change
 terraform plan -var="sql_warehouse_cluster_size=Large"
 
-# Apply the change
+# Apply change to production
 terraform apply -var="sql_warehouse_cluster_size=Large" -auto-approve
 
-# Verify the change
+# Verify change
 terraform output sql_warehouse_cluster_size
-# Result: "Large"
 ```
 
-**Show in Databricks UI**: Refresh SQL Warehouses page to see the change.
+**Key Message**: "Changing infrastructure through code, not clicking buttons in the UI."
 
-### **3. Technical Answers (15 minutes)**
-*"I've implemented comprehensive answers to all 9 technical questions."*
+## Technical Solutions (15 minutes)
 
-**Show:**
-- Open `ASSIGNMENT_ANSWERS.md`
-- Highlight key sections with code examples
-- Show working notebooks in `notebooks/` folder
+### Show Key Notebooks
+- `01_data_pipeline_demo.py` - CSV to Parquet processing
+- `06_delta_versioning_demo.py` - Delta time travel
+- `02_incremental_pipeline.py` - Incremental processing
+- `03_query_optimization.py` - Performance optimization
 
-### **4. Power BI Assessment (10 minutes)**
-*"I've designed a complete self-service Power BI solution for 5 departments."*
+### Key Technical Points
+- **Unity Catalog**: Enterprise governance and security
+- **Service Principal**: Secure ADLS Gen2 connectivity
+- **Delta Tables**: ACID transactions and time travel
+- **Incremental Processing**: Cost-effective data pipelines
 
-**Key Points:**
-- **Departments**: Data Platform, Analytics Engineers, Data Governance, SMD, E&E
+## Power BI Architecture (10 minutes)
+
+### Multi-Department Design
+- **5 Departments**: Data Platform, Analytics Engineers, Data Governance, SMD, E&E
 - **Security**: Unity Catalog with row-level security
-- **Access Control**: Role-based permissions for each department
+- **Access Control**: Role-based permissions per department
 - **Implementation**: 16-week phased approach
 
----
+### Key Benefits
+- Self-service analytics for each department
+- Centralized governance with distributed access
+- Scalable architecture for future growth
 
-## 📋 **Key Files You Need**
+## Files Reference
+- `ASSIGNMENT_ANSWERS.md` - All technical answers
+- `databricks_setup/` - Terraform infrastructure
+- `notebooks/` - Working code examples
 
-### **Essential Files:**
-1. **`PRESENTATION_GUIDE.md`** - This file (everything you need)
-2. **`ASSIGNMENT_ANSWERS.md`** - All technical answers
-3. **`databricks_setup/`** - Terraform infrastructure
-4. **`notebooks/`** - Working code examples
-
-### **Notebooks to Show:**
-- **`01_data_pipeline_demo.py`** - CSV to Parquet processing
-- **`06_delta_versioning_demo.py`** - Delta time travel
-- **`02_incremental_pipeline.py`** - Incremental processing
-- **`03_query_optimization.py`** - Performance optimization
-
----
-
-## 🎯 **Key Messages**
-
-### **Infrastructure as Code**
-- "I'm changing infrastructure by modifying code, not clicking buttons"
-- "All changes are version-controlled in Git"
-- "This is a real production environment"
-
-### **Enterprise-Grade Solution**
-- "Unity Catalog provides enterprise governance"
-- "Service Principal authentication ensures secure access"
-- "Pre-commit hooks enforce code quality automatically"
-
-### **Complete Implementation**
-- "Every requirement has been addressed with working implementations"
-- "This provides a solid foundation for Van Oord's data platform transformation"
-
----
-
-## 🚨 **If Something Goes Wrong**
-
-### **If Live Demo Fails:**
-1. Show pre-configured scenarios
-2. Explain the process
-3. Show Git history
-
-### **If Network Issues:**
-1. Use screenshots
-2. Focus on architecture
-3. Show code examples
-
----
-
-## 🏆 **You're Ready!**
-
-**Confidence Level**: High - You have built an exceptional solution.
-
-**Remember**: This is enterprise-grade work. Present it with confidence! 🚀
-
----
-
-## 📞 **Quick Reference**
-
-**Workspace**: https://adb-734420944977024.4.azuredatabricks.net
-**Storage**: voodatabricks77284
-**SQL Warehouse**: demo-sql-warehouse
-
-**Demo Commands:**
-```bash
-cd /Users/faust/Documents/GitHub/vanOord_assignment/databricks_setup
-terraform plan -var="sql_warehouse_cluster_size=Large"
-terraform apply -var="sql_warehouse_cluster_size=Large" -auto-approve
-```
-
-**That's it! You have everything you need in this one file.** 🎯
+## Key Messages
+1. **Infrastructure as Code**: Real production environment managed through code
+2. **Enterprise-Grade**: Unity Catalog, security, and governance
+3. **Complete Solution**: Every requirement addressed with working implementations
+4. **Production Ready**: Scalable architecture for Van Oord's needs
